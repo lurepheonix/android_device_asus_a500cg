@@ -21,7 +21,8 @@
 #include <stdlib.h>
 #include <cgpt.h>
 #include <cutils/properties.h>
-#include <roots.h>
+#include "roots.h"
+
 
 #include "util.h"
 #include "update_osip.h"

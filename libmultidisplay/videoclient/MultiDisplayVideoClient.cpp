@@ -36,8 +36,8 @@ namespace intel {
 
 MultiDisplayVideoClient::MultiDisplayVideoClient() {
     mSessionId = -1;
-    mState = MDS_VIDEO_UNPREPARED;
     mVideo = NULL;
+    mState = MDS_VIDEO_UNPREPARED;
 };
 
 
@@ -45,6 +45,21 @@ MultiDisplayVideoClient::~MultiDisplayVideoClient() {
     // ALOGI("Destroy mds video client %d", mSessionId);
     close();
 };
+
+sp<IMDService> MultiDisplayVideoClient::getService() {
+    sp<IServiceManager> sm = defaultServiceManager();
+    if (sm == NULL) {
+        ALOGW("%s: Failed to get service manager", __func__);
+        return NULL;
+    }
+    sp<IMDService> mds = interface_cast<IMDService>(
+            sm->getService(String16(INTEL_MDS_SERVICE_NAME)));
+    if (mds == NULL) {
+        ALOGW("%s: Failed to get MDS service", __func__);
+        return NULL;
+    }
+    return mds;
+}
 
 void MultiDisplayVideoClient::close() {
     mSessionId = -1;
@@ -65,18 +80,22 @@ status_t MultiDisplayVideoClient::prepare(int state, bool isProtected) {
             (state == MDS_VIDEO_PREPARING ||
              state == MDS_VIDEO_UNPREPARING)) {
         // ignore preparing and unpreparing state if video is not protected
-        ALOGI("Ignore MDS preparing and unpreparing for clear content");
+        ALOGW("Ignore MDS preparing and unpreparing for clear content");
         return UNKNOWN_ERROR;
     }
-    ALOGI("Video state is %d, %d", state, mState);
     if (mVideo == NULL) {
-        mVideo = new MultiDisplayClient();
+        sp<IMDService> mds = getService();
+        if (mds == NULL) {
+            return UNKNOWN_ERROR;
+        }
+        mVideo = mds->getVideoControl();
     }
     if (mSessionId < 0) {
-        mSessionId = 0;//mVideo->allocateVideoSessionId();
+        mSessionId = mVideo->allocateVideoSessionId();
     }
     return NO_ERROR;
 }
+
 status_t MultiDisplayVideoClient::setVideoState(int state,
         bool isProtected, const sp<MetaData> &meta) {
     if (prepare(state, isProtected) != NO_ERROR)
@@ -86,7 +105,6 @@ status_t MultiDisplayVideoClient::setVideoState(int state,
         MDSVideoSourceInfo info;
         memset(&info, 0, sizeof(MDSVideoSourceInfo));
         info.isProtected = isProtected;
-        info.isPlaying = true;
         if (meta != NULL && meta.get() != NULL) {
             if (!meta->findInt32(kKeyFrameRate, &info.frameRate)) {
                 info.frameRate = 0;
@@ -117,7 +135,6 @@ status_t MultiDisplayVideoClient::setVideoState(int state,
         if (msg != NULL && msg.get() != NULL) {
             MDSVideoSourceInfo info;
             memset(&info, 0, sizeof(MDSVideoSourceInfo));
-            info.isPlaying = true;
             info.isProtected = isProtected;
             bool success = msg->findInt32("frame-rate", &info.frameRate);
             if (!success)
@@ -141,10 +158,15 @@ status_t MultiDisplayVideoClient::setVideoState(int state,
 }
 
 status_t MultiDisplayVideoClient::reset() {
-    if (mVideo != NULL)
-        return  mVideo->resetVideoPlayback();
-    else
+    sp<IMDService> mds = getService();
+    if (mds == NULL) {
         return UNKNOWN_ERROR;
+    }
+    sp<IMultiDisplayVideoControl> video = mds->getVideoControl();
+    if (video == NULL) {
+        return UNKNOWN_ERROR;
+    }
+    return  video->resetVideoPlayback();
 }
 
 }; // namespace intel

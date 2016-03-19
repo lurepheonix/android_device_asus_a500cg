@@ -30,13 +30,16 @@ PRODUCT_BRAND := asus
 PRODUCT_MODEL := ASUS_T00F
 PRODUCT_DEVICE := a500cg
 
-ifeq ($(TARGET_PREBUILT_KERNEL),)
-	LOCAL_KERNEL := device/asus/a500cg/blobs/bzImage-boot-newDTW
-else
-	LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-endif
+#ifeq ($(TARGET_PREBUILT_KERNEL),)
+#	LOCAL_KERNEL := device/asus/a500cg/blobs/bzImage-boot-newDTW
+#else
+#	LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+#endif
+#PRODUCT_COPY_FILES += \
+#    $(LOCAL_KERNEL):kernel
+
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel
+    device/asus/a500cg/kernel:kernel
 
 #TARGET_RECOVERY_PREBUILT_KERNEL := $(LOCAL_KERNEL)
 
@@ -221,13 +224,14 @@ PRODUCT_PACKAGES += \
   tune2fs \
   resize2fs
 
-PRODUCT_PACKAGES += \
-  Stk
+#PRODUCT_PACKAGES += \
+#  Stk
 
 PRODUCT_PACKAGES += \
-  libmultidisplay \
-  libmultidisplayjni \
-  com.intel.multidisplay.xml
+	com.intel.multidisplay.xml \
+	com.intel.multidisplay \
+	libmultidisplay \
+	libmultidisplayjni
 
 # library
 PRODUCT_PACKAGES += \
@@ -291,13 +295,13 @@ PRODUCT_PACKAGES += \
 
 
 #ituxd for intel thermal management
-ENABLE_ITUXD := true
-PRODUCT_PACKAGES += \
-  ituxd
+ENABLE_ITUXD := false
+#PRODUCT_PACKAGES += \
+#  ituxd
 
 # sbin/thermald
-PRODUCT_PACKAGES += \
-  thermald
+#PRODUCT_PACKAGES += \
+#  thermald
 
 PRODUCT_PACKAGES += \
   libproperty
@@ -432,7 +436,6 @@ PRODUCT_PACKAGES += \
 	libvideoeditorsharing_jni \
 	libvideoeditorsharingplayer \
 	libia_face_jni \
-	com.intel.android.gallery3d.common2 \
 	libgesture \
 	libActivityInstant \
 	com.intel.aware.csp.provider \
@@ -442,7 +445,6 @@ PRODUCT_PACKAGES += \
 	libawarehubservice \
 	libandroidsupport \
 	libcsdk \
-	cacservice-x86 \
 	libclientapi \
 	libcu \
 	libcfcommon \

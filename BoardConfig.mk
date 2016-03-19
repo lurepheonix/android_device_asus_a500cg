@@ -112,6 +112,7 @@ HOST_OUT ?= out/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 #TARGET_PREBUILT_KERNEL := device/asus/a500cg/blobs/bzImage-boot-newDTW
 #DEVICE_BASE_BOOT_IMAGE := device/asus/a500cg/blobs/boot_60.img
 #DEVICE_BASE_RECOVERY_IMAGE := device/asus/a500cg/blobs/recovery_60.img
+#TARGET_PREBUILT_KERNEL := device/asus/a500cg/kernel
 
 # Kernel config (reference only)
 BOARD_KERNEL_BASE := 0x10000000
@@ -165,7 +166,7 @@ TARGET_USES_64_BIT_BINDER := true
 
 # Audio
 BOARD_USES_ALSA_AUDIO := true
-BUILD_WITH_ALSA_UTILS := true
+#BUILD_WITH_ALSA_UTILS := true
 BOARD_USES_TINY_ALSA_AUDIO := true
 BOARD_USES_AUDIO_HAL_XML := true
 BOARD_USES_AUDIO_HAL_CONFIGURABLE := true
@@ -173,10 +174,6 @@ BOARD_USES_AUDIO_HAL_CONFIGURABLE := true
 # DRM Protected Video
 BOARD_WIDEVINE_OEMCRYPTO_LEVEL := 1
 USE_INTEL_SECURE_AVC := true
-
-
-# enable ARM codegen for x86 with Houdini
-BUILD_ARM_FOR_X86 := true
 
 # HW_Renderer
 USE_OPENGL_RENDERER := true

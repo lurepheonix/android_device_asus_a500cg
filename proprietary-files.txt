@@ -11,7 +11,6 @@ system/vendor/firmware/telephony/XMM_6360_A500CG_REV20_1515.00_LPDDR1_MIPI_FLASH
 system/vendor/firmware/00ov8830-0-0x2-0.drvb
 system/vendor/media/LMspeed_508.emd
 system/vendor/media/PFFprec_600.emd
-system/vendor/etc/audio_effects.conf
 system/vendor/etc/route_criteria.conf
 system/vendor/etc/fallback_fonts.xml
 system/vendor/etc/style.cng
@@ -73,10 +72,8 @@ system/etc/versions/amax.system.whole_system_onehand.xml
 system/etc/versions/amax.system.textview.magnifier.xml
 system/etc/versions/asus.commonui.theme.xml
 system/etc/phonecall_es305b_close_talk_voip_nb.bin
-system/etc/thermal_throttle_config.xml
 system/etc/phonecall_es305b_active_pass_through_voip.bin
 system/etc/phonecall_es305b_headset_close_talk_csv_wb.bin
-system/etc/thermal_throttle_config_a600cg.xml
 #system/etc/selective-spn-conf.xml
 system/etc/sensor_hal_config_scale-pr1.xml
 system/etc/gallery_arcsoft_config.cng
@@ -168,8 +165,6 @@ system/etc/dhcpcd/dhcpcd-hooks/20-dns.conf
 system/etc/dhcpcd/android.conf
 system/etc/phonecall_es305b_close_talk_tty_vco_csv_nb.bin
 system/etc/sarconfig.xml
-system/etc/thermal_sensor_config.xml
-system/etc/icesoundpresets.def
 system/etc/phonecall_es305b_speaker_far_talk_tty_hco_csv_nb.bin
 system/etc/permissions/asus.software.azs.xml
 system/etc/permissions/asus.hardware.transcover_info.xml
@@ -239,7 +234,6 @@ system/etc/parameter-framework/Settings/Audio/AudioConfigurableDomains_a502cg.xm
 system/etc/parameter-framework/Settings/Audio/AudioConfigurableDomains_a600cg.xml
 system/etc/parameter-framework/Settings/Vibrator/VibratorConfigurableDomains.xml
 system/etc/parameter-framework/ParameterFrameworkConfiguration_a500cg.xml
-system/etc/thermal_throttle_config_a500cg.xml
 system/etc/phonecall_es305b_headphone_close_talk_voip_nb.bin
 system/etc/phonecall_es305b_bt_hsp_voip_wb.bin
 #system/etc/gps.xml
@@ -338,7 +332,6 @@ system/etc/bluetooth/bt_did.conf
 system/etc/bluetooth/bt_vendor.conf
 system/etc/bluetooth/bt_stack.conf
 system/etc/bluetooth/bt_stack_debug.conf
-system/etc/icesoundpresets_a500cg.def
 system/etc/security/EPID_certs/Group_2857_Public_Key.cer
 system/etc/security/EPID_certs/PAVP_Group_CLPEPIDPREPROD_G1_Public_Keys.bin
 system/etc/security/EPID_certs/Group_0_Public_Key.cer
@@ -368,8 +361,7 @@ system/etc/security/EPID_certs/Group_2846_Public_Key.cer
 system/etc/security/email.p12
 system/etc/phonecall_es305b_bt_nrec_csv_wb.bin
 system/etc/route_criteria.conf
-system/etc/icesoundpresets_a600cg.def
-system/etc/sensor_hal_config_general_default.xml
+ystem/etc/sensor_hal_config_general_default.xml
 system/etc/asound.conf
 system/etc/widi/widi.conf
 system/etc/phonecall_es305b_headphone_close_talk_voip_wb.bin
@@ -388,14 +380,11 @@ system/etc/wifi/bcmdhd_a500cg.cal
 system/etc/devconf.json
 system/etc/fg_config.bin
 system/etc/phonecall_es305b_speaker_far_talk_csv_wb.bin
-system/etc/icesoundpresets_a502cg.def
 system/etc/sensor_hal_config_general_scale-pr1.xml
-system/etc/thermal_sensor_config_a500cg.xml
 system/etc/phonecall_es305b_close_talk_tty_hco_csv_wb.bin
 system/etc/phonecall_es305b_speaker_far_talk_tty_hco_csv_wb.bin
 system/etc/phonecall_es305b_close_talk_hac_voip_nb.bin
 system/etc/media_profiles.xml
-system/etc/thermal_sensor_config_a600cg.xml
 system/etc/phonecall_es305b_bt_nrec_voip_nb.bin
 system/etc/phonecall_es305b_speaker_far_talk_voip_nb.bin
 system/etc/mamgr/xmm1.xml
@@ -689,7 +678,6 @@ system/lib/libstagefright_soft_vorbisdec_mdp.so
 system/lib/DIT_AT_BACK_VIDEO_ID3.cfg
 system/lib/libril.so
 system/lib/libstagefright_soft_aacenc_mdp.so
-system/lib/libicepower.so
 system/lib/libclcore.bc
 system/lib/libPdfConverter.so
 system/lib/libtbd.so

@@ -77,3 +77,4 @@ include $(call first-makefiles-under,$(LOCAL_PATH))
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
 endif
+$(shell mkdir -p $(OUT)/obj/KERNEL_OBJ/usr)
