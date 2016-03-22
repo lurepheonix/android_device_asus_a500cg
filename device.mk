@@ -38,7 +38,7 @@ PRODUCT_DEVICE := a500cg
 #PRODUCT_COPY_FILES += \
 #    $(LOCAL_KERNEL):kernel
 
-PRODUCT_COPY_FILES += \
+#PRODUCT_COPY_FILES += \
     device/asus/a500cg/kernel:kernel
 
 #TARGET_RECOVERY_PREBUILT_KERNEL := $(LOCAL_KERNEL)
@@ -572,6 +572,13 @@ PRODUCT_PROPERTY_OVERRIDES += persist.sys.isUsbOtgEnabled=1
 
 # Set default network type to LTE/GSM/WCDMA (9)
 PRODUCT_PROPERTY_OVERRIDES += ro.telephony.default_network=0
+
+# F2FS
+PRODUCT_PACKAGES += \
+     mkfs.f2fs \
+     fsck.f2fs \
+     fibmap.f2fs
+ 
 
 
 # setup dalvik vm configs.
