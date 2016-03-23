@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2016 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,19 @@ package org.cyanogenmod.hardware;
 
 import java.io.File;
 import org.cyanogenmod.hardware.util.FileUtils;
+import android.os.SystemProperties;
 
 public class TapToWake {
+	public static boolean isSupported() {
+		return true;
+	}
 
-    private static final String CONTROL_PATH = "/sys/devices/pci0000:00/0000:00:00.3/i2c-0/0-0020/input/input1/dclick_mode";
-    private static boolean sEnabled = true;
+	public static boolean isEnabled() {
+		return SystemProperties.getBoolean("persist.asus.dclick", false);
+	}
 
-    public static boolean isSupported() {
-        File f = new File(CONTROL_PATH);
-        return f.exists();
-    }
-
-    public static boolean isEnabled()  {
-        return sEnabled;
-    }
-
-    public static boolean setEnabled(boolean state)  {
-        sEnabled = state;
-        return FileUtils.writeLine(CONTROL_PATH, (state ? "1" : "0"));
-    }
-} 
+	public static boolean setEnabled(boolean state)  {
+		SystemProperties.set("persist.asus.dclick", ((state) ? "1" : "0"));
+		return true;
+	}
+}

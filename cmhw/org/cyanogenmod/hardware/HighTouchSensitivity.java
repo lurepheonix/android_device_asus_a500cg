@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2016 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,45 +18,19 @@ package org.cyanogenmod.hardware;
 
 import java.io.File;
 import org.cyanogenmod.hardware.util.FileUtils;
+import android.os.SystemProperties;
 
-
-/**
- * Glove mode / high touch sensitivity
- */
 public class HighTouchSensitivity {
+	public static boolean isSupported() {
+		return true;
+	}
 
-    private static String GLOVEMODE_PATH = "/sys/devices/pci0000:00/0000:00:00.3/i2c-0/0-0020/input/input1/glove_mode";
+	public static boolean isEnabled() {
+		return SystemProperties.getBoolean("persist.asus.glove", false);
+	}
 
-    /**
-     * Whether device supports high touch sensitivity.
-     *
-     * @return boolean Supported devices must return always true
-     */
-    public static boolean isSupported() {
-        File f = new File(GLOVEMODE_PATH);
-        return f.exists();
-    }
-
-    /** This method returns the current activation status of high touch sensitivity
-     *
-     * @return boolean Must be false if high touch sensitivity is not supported or not activated,
-     * or the operation failed while reading the status; true in any other case.
-     */
-    public static boolean isEnabled() {
-        int i;
-        i = Integer.parseInt(FileUtils.readOneLine(GLOVEMODE_PATH));
-
-        return i == 1 ? true : false;
-    }
-
-    /**
-     * This method allows to setup high touch sensitivity status.
-     *
-     * @param status The new high touch sensitivity status
-     * @return boolean Must be false if high touch sensitivity is not supported or the operation
-     * failed; true in any other case.
-     */
-    public static boolean setEnabled(boolean status) {
-        return FileUtils.writeLine(GLOVEMODE_PATH, String.valueOf(status ? 1 : 0));
-    }
+	public static boolean setEnabled(boolean state)  {
+		SystemProperties.set("persist.asus.glove", ((state) ? "1" : "0"));
+		return true;
+	}
 }

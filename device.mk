@@ -579,7 +579,11 @@ PRODUCT_PACKAGES += \
      fsck.f2fs \
      fibmap.f2fs
  
-
+# Prebuilt WebView
+PRODUCT_PACKAGES += \
+	libwebviewchromium_plat_support \
+	libwebviewchromium_loader \
+	webview
 
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
