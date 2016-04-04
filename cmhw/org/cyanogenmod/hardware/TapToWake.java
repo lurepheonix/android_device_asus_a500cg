@@ -18,19 +18,20 @@ package org.cyanogenmod.hardware;
 
 import java.io.File;
 import org.cyanogenmod.hardware.util.FileUtils;
-import android.os.SystemProperties;
 
 public class TapToWake {
+	private static final String CONTROL_PATH = "/sys/devices/pci0000:00/0000:00:00.3/i2c-0/0-0020/input/input1/dclick_mode";
+
 	public static boolean isSupported() {
-		return true;
+		File f = new File(CONTROL_PATH);
+		return f.exists();
 	}
 
 	public static boolean isEnabled() {
-		return SystemProperties.getBoolean("persist.asus.dclick", false);
+		return Integer.parseInt(FileUtils.readOneLine(CONTROL_PATH)) == 1;
 	}
 
-	public static boolean setEnabled(boolean state)  {
-		SystemProperties.set("persist.asus.dclick", ((state) ? "1" : "0"));
-		return true;
+	public static boolean setEnabled(boolean state) {
+		return FileUtils.writeLine(CONTROL_PATH, (state ? "1" : "0"));
 	}
 }

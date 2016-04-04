@@ -30,29 +30,11 @@ PRODUCT_BRAND := asus
 PRODUCT_MODEL := ASUS_T00F
 PRODUCT_DEVICE := a500cg
 
-#ifeq ($(TARGET_PREBUILT_KERNEL),)
-#	LOCAL_KERNEL := device/asus/a500cg/blobs/bzImage-boot-newDTW
-#else
-#	LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-#endif
-#PRODUCT_COPY_FILES += \
-#    $(LOCAL_KERNEL):kernel
-
 PRODUCT_COPY_FILES += \
     device/asus/a500cg/kernel:kernel
 
-#TARGET_RECOVERY_PREBUILT_KERNEL := $(LOCAL_KERNEL)
-
-
-# This device is xhdpi.  However the platform doesn't
-# currently contain all of the bitmaps at xhdpi density so
-# we do this little trick to fall back to the hdpi version
-# if the xhdpi doesn't exist.
 PRODUCT_AAPT_CONFIG := normal xhdpi
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
-
-
-CUSTOM_SUPERUSER = SuperSu
 
 # specific management of audio_policy.conf
 PRODUCT_COPY_FILES += \
@@ -76,6 +58,13 @@ PRODUCT_COPY_FILES += \
 # Binary to be replaced with source code ..
 PRODUCT_COPY_FILES += \
   device/asus/a500cg/twrp.fstab:recovery/root/etc/twrp.fstab
+  
+# Root and Tools
+PRODUCT_PACKAGES += \
+	procmem \
+	procrank \
+	su \
+	screencap
 
 # Wifi
 PRODUCT_PACKAGES += \
@@ -88,58 +77,48 @@ PRODUCT_PACKAGES += \
   lib_driver_cmd_bcmdhd \
   iw
 
-# Audio
+# TinyAlsa Binaries
 PRODUCT_PACKAGES += \
-	libaudioutils
-#	libtinycompress \
-#	libtinyalsa \
-#	audio.a2dp.default \
-#	audio.primary.default \
-#	audio.r_submix.default \
-#	audio.usb.default \
-#	libtinyalsa-subsystem \
+	tinycap \
+	tinymix \
+	tinyplay
 
-# Stagefright
-#PRODUCT_PACKAGES += \
-#    libstagefrighthw
 
-# omx common
+# Libraries Required by Intel Sources
 PRODUCT_PACKAGES += \
-	libwrs_omxil_common \
-	libwrs_omxil_core_pvwrapped
+	liblog \
+	libdrm
 
-# video decoder encoder
+# Video Acceleration API for Video Encoding and Decoding
+PRODUCT_PACKAGES += \
+	libva \
+	libva-android \
+	libva-tpi
+
+# OpenMAX Video Encoders/Decoders
 PRODUCT_PACKAGES += \
 	libOMXVideoDecoderAVC \
+	libOMXVideoDecoderAVCSecure \
 	libOMXVideoDecoderH263 \
 	libOMXVideoDecoderMPEG4 \
 	libOMXVideoDecoderWMV \
 	libOMXVideoEncoderAVC \
 	libOMXVideoEncoderH263 \
-	libOMXVideoEncoderMPEG4 \
-	libOMXVideoDecoderAVCSecure
+	libOMXVideoEncoderMPEG4
 
-# libwsbm
+# PowerHAL
 PRODUCT_PACKAGES += \
-	libwsbm
-
-# libmix
-#PRODUCT_PACKAGES += \
-#	libmixvbp \
-#	libmixvbp_h264 \
-#	libmixvbp_h264secure \
-#	libmixvbp_mpeg4 \
-#	libmixvbp_vc1
-
-# image decoder
-#PRODUCT_PACKAGES += \
-#	libmix_imagedecoder \
-#	libmix_imageencoder
-
-# Media SDK and OMX IL components
+    power.redhookbay
+    
+# OpenMAX Interaction Layer Implementation for Intel VA API
 PRODUCT_PACKAGES += \
-	msvdx_bin \
-	topaz_bin
+	wrs_omxil_core \
+	libwrs_omxil_core \
+	libwrs_omxil_core_pvwrapped
+
+# StageFright Hardware Decoding
+PRODUCT_PACKAGES += \
+	libstagefrighthw
 
 PRODUCT_COPY_FILES += \
   device/asus/a500cg/configs/platform.xml:system/etc/permissions/platform.xml \
@@ -281,9 +260,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
   camera.$(TARGET_DEVICE)
 
-# lib audio.codec.offload
-#PRODUCT_PACKAGES += \
-#  audio.codec_offload.$(TARGET_DEVICE)
 
 #Touchfilter
 PRODUCT_PACKAGES += \
@@ -292,16 +268,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
   libgesture \
   libActivityInstant
-
-
-#ituxd for intel thermal management
-ENABLE_ITUXD := false
-#PRODUCT_PACKAGES += \
-#  ituxd
-
-# sbin/thermald
-#PRODUCT_PACKAGES += \
-#  thermald
 
 PRODUCT_PACKAGES += \
   libproperty

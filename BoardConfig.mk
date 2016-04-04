@@ -21,13 +21,12 @@ TARGET_CPU_ABI_LIST_32_BIT := x86,armeabi-v7a,armeabi
 TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := x86
 
+# Atom optimizations to improve memory benchmarks.
+-include device/asus/a500cg/OptAtom.mk
+
 INTEL_INGREDIENTS_VERSIONS := true
 LOCAL_CFLAGS += -DARCH_IA32
 TARGET_PRELINK_MODULE := false
-
-#add some intel BOOTCLASSPATH
-#PRODUCT_BOOT_JARS += com.intel.multidisplay 
-#com.intel.config 
 
 # skip some proccess to speed up build
 BOARD_SKIP_ANDROID_DOC_BUILD := true
@@ -41,17 +40,14 @@ ADDITIONAL_BUILD_PROPERTIES +=
     ro.enable.native.bridge.exec=1 \
     ro.dalvik.vm.native.bridge=libhoudini.so
 
-# Atom optimizations to improve memory benchmarks.
--include device/asus/a500cg/OptAtom.mk
-
-TARGET_RECOVERY_FSTAB := device/asus/a500cg/recovery.fstab
-
 TARGET_BOARD_PLATFORM := clovertrail
 TARGET_BOOTLOADER_BOARD_NAME := clovertrail
 TARGET_USERIMAGES_USE_EXT4 := true
+#planning to use f2fs for data
 TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1363148800
 BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_HAS_LARGE_FILESYSTEM := true
 
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 
@@ -64,57 +60,11 @@ BOARD_MALLOC_ALIGNMENT := 16
 # Appends path to ARM libs for Houdini
 PRODUCT_LIBRARY_PATH := $(PRODUCT_LIBRARY_PATH):/system/lib/arm
 
-# Inline kernel building
-TARGET_KERNEL_BUILT_FROM_SOURCE := true
-TARGET_KERNEL_SOURCE := linux/kernel
-#TARGET_KERNEL_CONFIG := cyanogenmod_a500cg_defconfig
-#TARGET_KERNEL_SOURCE := kernel/asus/a500cg
-TARGET_KERNEL_CONFIG := cm_a500cg_defconfig
-#TARGET_KERNEL_CONFIG := i386_ctp_defconfig
-#KERNEL_CONFIG_OVERRIDE := device/asus/a500cg/asusctp_hd_diffconfig
-TARGET_KERNEL_ARCH := x86
-KERNEL_ARCH := i386
-BOARD_KERNEL_IMAGE_NAME := bzImage
-KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9/bin
-TARGET_KERNEL_CROSS_COMPILE_PREFIX := x86_64-linux-android-
-KERNEL_EXTRA_FLAGS := ANDROID_TOOLCHAIN_FLAGS=-mno-android
-KERNEL_SOC := ctp
-KERNEL_MODULES_INSTALL := root
-#remove time_macros from ccache options, it breaks signing process
-#KERNEL_CCSLOP := $(filter-out time_macros,$(subst $(comma), ,$(CCACHE_SLOPPINESS)))
-#KERNEL_CCSLOP := $(subst $(space),$(comma),$(KERNEL_CCSLOP))
-#CCACHE_SLOPPINESS := $(KERNEL_CCSLOP)
-#KERNEL_BLD_FLAGS := \
-#    ARCH=$(KERNEL_ARCH) \
-#    INSTALL_MOD_PATH=../modules_install \
-#    INSTALL_MOD_STRIP=1 \
-#    LOCALVERSION=-$(KERNEL_ARCH)_$(KERNEL_SOC) \
-#    $(KERNEL_EXTRA_FLAGS)
-    
 # PRODUCT_OUT and HOST_OUT are now defined after BoardConfig is included.
 # Add early definition here
 PRODUCT_OUT ?= out/target/product/$(TARGET_DEVICE)
 HOST_OUT ?= out/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 
-
-
-# Kernel Build from source inline
-# TARGET_KERNEL_CONFIG := a500cg_defconfig
-# TARGET_KERNEL_SOURCE := kernel/asus/a500cg
-# TARGET_KERNEL_ARCH := x86_64
-# BOARD_CUSTOM_BOOTIMG_MK := device/asus/a500cg/intel-boot-tools/boot.mk
-# DEVICE_BASE_BOOT_IMAGE := device/asus/a500cg/blobs/boot.img
-# BOARD_KERNEL_IMAGE_NAME := bzImage
-# TARGET_PREBUILT_KERNEL := out/target/product/a500cg/obj/KERNEL_OBJ/arch/x86/boot/bzImage
-# DEVICE_BASE_RECOVERY_IMAGE := device/asus/a500cg/blobs/recovery-WW-3.23.40.52.img
-
-# prebuild source kernel
-#BOARD_CUSTOM_BOOTIMG_MK := device/asus/a500cg/intel-boot-tools/boot.mk
-#BOARD_CUSTOM_MKBOOTIMG := device/asus/a500cg/intel-boot-tools/boot.mk
-#TARGET_PREBUILT_KERNEL := device/asus/a500cg/blobs/bzImage-boot-newDTW
-#DEVICE_BASE_BOOT_IMAGE := device/asus/a500cg/blobs/boot_60.img
-#DEVICE_BASE_RECOVERY_IMAGE := device/asus/a500cg/blobs/recovery_60.img
-#TARGET_PREBUILT_KERNEL := device/asus/a500cg/kernel
 
 # Kernel config (reference only)
 BOARD_KERNEL_BASE := 0x10000000
@@ -124,12 +74,19 @@ cmdline_extra1 := ip=50.0.0.2:50.0.0.1::255.255.255.0::usb0:on vmalloc=172M andr
 cmdline_extra2 := loglevel=8 kmemleak=off androidboot.bootmedia=sdcard androidboot.hardware=redhookbay androidboot.selinux=permissive
 BOARD_KERNEL_CMDLINE := init=/init pci=noearly console=logk0 earlyprintk=nologger  $(cmdline_extra)  $(cmdline_extra1)  $(cmdline_extra2) 
 
-# Enable dex-preoptimization to speed up first boot sequence
-ifeq ($(TARGET_BUILD_VARIANT),user)
-    ifeq ($(WITH_DEXPREOPT),)
-      WITH_DEXPREOPT := true
-    endif
-endif
+# Disable SELinux
+HAVE_SELINUX := false
+
+#Dex preoptimization
+WITH_DEXPREOPT := true
+
+# Radio Layer Interface
+RIL_SUPPORTS_SEEK := true
+BOARD_PROVIDES_LIBRIL := true
+BOARD_RIL_CLASS := ../../../device/asus/a500cg/ril/
+SIM_COUNT := 2
+ANDROID_MULTI_SIM := true
+TARGET_RIL_DISABLE_STATUS_POLLING := true
 
 # Wifi
 BOARD_HAVE_WIFI := true
@@ -149,7 +106,53 @@ BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
 BLUEDROID_ENABLE_V4L2 := true
 
-# Include an expanded selection of fonts
+# Graphics and compositing
+BUILD_WITH_FULL_STAGEFRIGHT := true
+ENABLE_IMG_GRAPHICS := true
+
+BOARD_USES_MRST_OMX := true
+BOARD_USES_WRS_OMXIL_CORE := true
+TARGET_HAS_ISV := true
+
+INTEL_VA := true
+BOARD_USE_LIBVA := true
+BOARD_USE_LIBVA_INTEL_DRIVER := true
+
+BOARD_USE_LIBMIX := true
+USE_INTEL_MULT_THREAD := true
+
+BOARD_USES_HWCOMPOSER := true
+INTEL_HWC := true
+TARGET_SUPPORT_HWC_SYS_LAYER := true
+
+TARGET_HAS_MULTIPLE_DISPLAY := true
+USE_MDS_LEGACY := true
+USE_INTEL_MDP := true
+
+VSYNC_EVENT_PHASE_OFFSET_NS := 7500000
+SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
+
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.hwui.drop_shadow_cache_size = 6 \
+    ro.hwui.gradient_cache_size = 1 \
+    ro.hwui.layer_cache_size = 48 \
+    ro.hwui.path_cache_size = 32 \
+    ro.hwui.text_large_cache_width = 2048 \
+    ro.hwui.text_large_cache_height = 1024 \
+    ro.hwui.text_small_cache_width = 1024 \
+    ro.hwui.text_small_cache_height = 1024 \
+    ro.hwui.texture_cache_flushrate = 0.4 \
+    ro.hwui.texture_cache_size = 72
+
+MAX_EGL_CACHE_ENTRY_SIZE := 65536
+MAX_EGL_CACHE_SIZE := 1048576
+
+
+# Audio
+BOARD_USES_TINY_ALSA_AUDIO := true
+
+# Fonts
+USE_MINIKIN := true
 EXTENDED_FONT_FOOTPRINT := true
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
@@ -166,32 +169,6 @@ BOARD_HAVE_NFC := false
 #BINDER
 TARGET_USES_64_BIT_BINDER := true
 
-# Audio
-BOARD_USES_ALSA_AUDIO := true
-#BUILD_WITH_ALSA_UTILS := true
-BOARD_USES_TINY_ALSA_AUDIO := true
-BOARD_USES_AUDIO_HAL_XML := true
-BOARD_USES_AUDIO_HAL_CONFIGURABLE := true
-
-# DRM Protected Video
-BOARD_WIDEVINE_OEMCRYPTO_LEVEL := 1
-USE_INTEL_SECURE_AVC := true
-
-# HW_Renderer
-USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := device/asus/a500cg/configs/egl.cfg
-BOARD_ALLOW_EGL_HIBERNATION := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
-COMMON_GLOBAL_CFLAGS += -DFORCE_SCREENSHOT_CPU_PATH
-BOARD_EGL_WORKAROUND_BUG_10194508 := true
-# DPST
-INTEL_DPST := true
-
-# HWComposer
-BOARD_USES_HWCOMPOSER := true
-
-# RILD
-RIL_SUPPORTS_SEEK := true
 
 # GPS
 BOARD_HAVE_GPS := true
@@ -213,18 +190,12 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
     dalvik.vm.image-dex2oat-Xms=64m \
     dalvik.vm.image-dex2oat-Xmx=64m
 
-
-# File system
-# Storage information
-BOARD_HAS_LARGE_FILESYSTEM := true
-
-# Recovery global
-#TARGET_RECOVERY_INITRC := device/asus/a500cg/ramdisk/recovery.init.redhookbay.rc
+# Generic recovery
+TARGET_RECOVERY_FSTAB := device/asus/a500cg/recovery.fstab
 BOARD_RECOVERY_SWIPE := true
 BOARD_UMS_LUNFILE := "/sys/devices/virtual/android_usb/android0/f_mass_storage/lun/file"
-#TARGET_RECOVERY_PREBUILT_KERNEL := $(PRODUCT_OUT)/kernel
-# TWR
-# Recovery options TWRP
+
+# TWRP specific options
 DEVICE_RESOLUTION := 720x1280
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_L_CRYPTO := true
@@ -242,84 +213,6 @@ TW_DEFAULT_EXTERNAL_STORAGE := true
 TW_EXCLUDE_SUPERSU := false
 BOARD_UMS_LUNFILE := "/sys/devices/virtual/android_usb/android0/f_mass_storage/lun/file"
 BOARD_SUPPRESS_EMMC_WIPE := true
-
-
-
-# SELinux
-#HAVE_SELINUX := true
-#BOARD_SEPOLICY_DIRS += device/asus/a500cg/sepolicy
-
-#BOARD_SEPOLICY_UNION += \
-    file_contexts \
-    seapp_contexts \
-    property_contexts \
-    service_contexts \
-    file.te \
-    device.te \
-    ecryptfs.te \
-    genfs_contexts \
-    vold.te \
-    surfaceflinger.te \
-    zygote.te \
-    pvrsrvctl.te \
-    bluetooth.te \
-    surfaceflinger.te \
-    system_app.te \
-    file.te \
-    shell.te \
-    mediaserver.te \
-    nvm_server.te \
-    su.te   \
-    system_server.te \
-    service.te \
-    mmgr.te \
-    init.te \
-    kernel.te \
-    sysfs_uart_power_ctrl.te \
-    ueventd.te \
-    logcat.te \
-    netd.te \
-    wpa.te \
-    rild.te \
-    akmd.te \
-   # akmd_a600cg.te \
-    gauge.te \
-    customize.te \
-    untrusted_app.te \
-    intel_prop.te \
-    gpsd.te \
-    dpst.te \
-    pclink.te \
-    sensors.te \
-    isolated_app.te \
-    app.te
-
-# Build From source
-ENABLE_IMG_GRAPHICS := true
-#ENABLE_GEN_GRAPHICS := true
-USE_INTEL_MDP := true
-BUILD_WITH_FULL_STAGEFRIGHT := true
-BOARD_USE_LIBVA_INTEL_DRIVER := true
-BOARD_USE_LIBVA := true
-BOARD_USE_LIBMIX := true
-USE_INTEL_VA := true
-INTEL_VA := true
-USE_HW_VP8 := true
-#TARGET_HAS_MULTIPLE_DISPLAY := true
-USE_AVC_SHORT_FORMAT := true
-USE_SLICE_HEADER_PARSING := true
-USE_SW_MPEG4 := true
-
-#OMX-components
-BOARD_USES_MRST_OMX := true
-BOARD_USES_WRS_OMXIL_CORE := true
-TARGET_HAS_ISV := true
-
-# Enable Minikin text layout engine (will be the default soon)
-USE_MINIKIN := true
-
-# Include an expanded selection of fonts
-EXTENDED_FONT_FOOTPRINT := true
 
 BLOCK_BASED_OTA := false
 BOARD_CUSTOM_MAKE_RECOVERY_PATCH := vendor/intel/hardware/libintelprov/make_recovery_patch
@@ -353,18 +246,6 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
 
-
-# Define platform battery healthd library
-BOARD_HAL_STATIC_LIBRARIES += libhealthd.intel
-
-# Rild
-# Radio
-BOARD_RIL_SUPPORTS_MULTIPLE_CLIENTS := true
-BOARD_RIL_CLASS := ../../../device/asus/a500cg/ril
-SIM_COUNT := 2
-# Use Intel camera extras (HDR, face detection, panorama, etc.) by default
-USE_INTEL_CAMERA_EXTRAS := true
-
 # select libcamera2 as the camera HAL
 USE_CAMERA_HAL2 := true
 USE_CSS_1_5 := true
@@ -385,71 +266,19 @@ USE_VIDEO_EFFECT := true
 # Do not use shared object of ia_face by default
 USE_SHARED_IA_FACE := false
 
-# Use multi-thread for acceleration
-USE_INTEL_MULT_THREAD := true
-
-# Use Async OMX for http streaming
-USE_ASYNC_OMX_CLIENT := true
-
 # Use panorama v1.0 by default
 IA_PANORAMA_VERSION := 1.0
 
 # Turn on GR_STATIC_RECT_VB flag in skia to boost performance
 TARGET_USE_GR_STATIC_RECT_VB := true
 
-ifeq ($(TARGET_RIL_DISABLE_STATUS_POLLING),true)
-ADDITIONAL_BUILD_PROPERTIES += ro.ril.status.polling.enable=0
-endif
-
-# Libm
-#TARGET_USE_PRIVATE_LIBM := true
-
-#TARGET_HAS_MULTIPLE_DISPLAY := true
-USE_MDS_LEGACY := true
-BOARD_CAMERA_PLUGIN := vendor/intel/hardware/camera_extension
-#include $(COMMON_PATH)/BoardConfig.mk
 BOARD_USES_CYANOGEN_HARDWARE := true
 
-# HWcomposer
-INTEL_HWC := true
-INTEL_WIDI := false
-TARGET_SUPPORT_HWC_SYS_LAYER := true
-TARGET_HAS_MULTIPLE_DISPLAY := true
-
-INTEL_FEATURE_AWARESERVICE := true
-#PRODUCT_BOOT_JARS += com.intel.aware.awareservice
-
-# System's VSYNC phase offsets in nanoseconds
-VSYNC_EVENT_PHASE_OFFSET_NS := 7500000
-SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
-
-# Allow HWC to perform a final CSC on virtual displays
-TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-INTEL_WIDI := true
-HWUI_IMG_FBO_CACHE_OPTIM := true
-TARGET_INTEL_HWCOMPOSER_FORCE_ONLY_ONE_RGB_LAYER := true
-BOARD_USE_VIBRATOR := true
-#BOARD_USES_VIBRATOR_HAL_XML := true
-
-#USE_GENERAL_SENSOR_DRIVER := true
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
-BOARD_HAVE_AUDIENCE := true
-
-#Rapid-ril
-M2_VT_FEATURE_ENABLED := true
-M2_CALL_FAILED_CAUSE_FEATURE_ENABLED := true
-#M2_PIN_RETRIES_FEATURE_ENABLED := true
-BOARD_HAVE_IFX6265 := true
-M2_GET_SIM_SMS_STORAGE_ENABLED := true
-
 #WebRTC
 ENABLE_WEBRTC := true
-
-#ALAC CODEC
-USE_FEATURE_ALAC := true
 
 BOARD_HAVE_MODEM := true
 
@@ -464,6 +293,6 @@ VOLD_ENABLE_EXFAT := true
 USE_INTEL_ASF_EXTRACTOR := true
 
 INTEL_FEATURE_DPTF := true
-
-SEMC_CFG_FM_SERVICE_TI := true
-SEMC_CFG_FM_SERVICE_TI_HW := true
+ 
+ # PowerHAL
+ TARGET_POWERHAL_VARIANT := redhookbay

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 The CyanogenMod Project
+ * Copyright (C) 2016 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,33 +20,34 @@ import org.cyanogenmod.hardware.util.FileUtils;
 import java.io.File;
 
 public class VibratorHW {
-    private static String LEVEL_PATH = "/sys/devices/pci0000:00/0000:00:06.6/pwm_ontime_div";
+	private static String LEVEL_PATH = "/sys/devices/pci0000:00/0000:00:06.6/pwm_ontime_div";
+	private static String CONTROL_PATH = "/sys/devices/pci0000:00/0000:00:06.6/vibrator";
 
-    public static boolean isSupported() {
-        return new File(LEVEL_PATH).exists();
-    }
+	public static boolean isSupported() {
+		return new File(LEVEL_PATH).exists();
+	}
 
-    public static int getMaxIntensity()  {
-        return 80;
-    }
+	public static int getMaxIntensity()  {
+		return 128;
+	}
 
-    public static int getMinIntensity()  {
-        return 10;
-    }
+	public static int getMinIntensity()  {
+		return 16;
+	}
 
-    public static int getWarningThreshold()  {
-        return 70;
-    }
+	public static int getWarningThreshold()  {
+		return 110;
+	}
 
-    public static int getCurIntensity()  {
-        return Integer.parseInt(FileUtils.readOneLine(LEVEL_PATH));
-    }
+	public static int getCurIntensity()  {
+		return Integer.parseInt(FileUtils.readOneLine(LEVEL_PATH));
+	}
 
-    public static int getDefaultIntensity()  {
-        return 63;
-    }
+	public static int getDefaultIntensity()  {
+		return 99;
+	}
 
-    public static boolean setIntensity(int intensity)  {
-        return FileUtils.writeLine(LEVEL_PATH, String.valueOf(intensity));
-    }
+	public static boolean setIntensity(int intensity)  {
+		return FileUtils.writeLine(LEVEL_PATH, String.valueOf(intensity));
+	}
 }
