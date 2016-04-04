@@ -66,29 +66,30 @@ PRODUCT_LIBRARY_PATH := $(PRODUCT_LIBRARY_PATH):/system/lib/arm
 
 # Inline kernel building
 TARGET_KERNEL_BUILT_FROM_SOURCE := true
-#TARGET_KERNEL_SOURCE := linux/kernel
+TARGET_KERNEL_SOURCE := linux/kernel
 #TARGET_KERNEL_CONFIG := cyanogenmod_a500cg_defconfig
-TARGET_KERNEL_SOURCE := kernel/asus/a500cg
+#TARGET_KERNEL_SOURCE := kernel/asus/a500cg
 TARGET_KERNEL_CONFIG := cm_a500cg_defconfig
 #TARGET_KERNEL_CONFIG := i386_ctp_defconfig
 #KERNEL_CONFIG_OVERRIDE := device/asus/a500cg/asusctp_hd_diffconfig
 TARGET_KERNEL_ARCH := x86
 KERNEL_ARCH := i386
 BOARD_KERNEL_IMAGE_NAME := bzImage
-KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.8/bin
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9/bin
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := x86_64-linux-android-
 KERNEL_EXTRA_FLAGS := ANDROID_TOOLCHAIN_FLAGS=-mno-android
 KERNEL_SOC := ctp
+KERNEL_MODULES_INSTALL := root
 #remove time_macros from ccache options, it breaks signing process
-KERNEL_CCSLOP := $(filter-out time_macros,$(subst $(comma), ,$(CCACHE_SLOPPINESS)))
-KERNEL_CCSLOP := $(subst $(space),$(comma),$(KERNEL_CCSLOP))
-CCACHE_SLOPPINESS := $(KERNEL_CCSLOP)
-KERNEL_BLD_FLAGS := \
-    ARCH=$(KERNEL_ARCH) \
-    INSTALL_MOD_PATH=../modules_install \
-    INSTALL_MOD_STRIP=1 \
-    LOCALVERSION=-$(KERNEL_ARCH)_$(KERNEL_SOC) \
-    $(KERNEL_EXTRA_FLAGS)
+#KERNEL_CCSLOP := $(filter-out time_macros,$(subst $(comma), ,$(CCACHE_SLOPPINESS)))
+#KERNEL_CCSLOP := $(subst $(space),$(comma),$(KERNEL_CCSLOP))
+#CCACHE_SLOPPINESS := $(KERNEL_CCSLOP)
+#KERNEL_BLD_FLAGS := \
+#    ARCH=$(KERNEL_ARCH) \
+#    INSTALL_MOD_PATH=../modules_install \
+#    INSTALL_MOD_STRIP=1 \
+#    LOCALVERSION=-$(KERNEL_ARCH)_$(KERNEL_SOC) \
+#    $(KERNEL_EXTRA_FLAGS)
     
 # PRODUCT_OUT and HOST_OUT are now defined after BoardConfig is included.
 # Add early definition here

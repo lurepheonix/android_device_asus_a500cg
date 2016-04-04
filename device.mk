@@ -38,7 +38,7 @@ PRODUCT_DEVICE := a500cg
 #PRODUCT_COPY_FILES += \
 #    $(LOCAL_KERNEL):kernel
 
-#PRODUCT_COPY_FILES += \
+PRODUCT_COPY_FILES += \
     device/asus/a500cg/kernel:kernel
 
 #TARGET_RECOVERY_PREBUILT_KERNEL := $(LOCAL_KERNEL)
@@ -48,7 +48,7 @@ PRODUCT_DEVICE := a500cg
 # currently contain all of the bitmaps at xhdpi density so
 # we do this little trick to fall back to the hdpi version
 # if the xhdpi doesn't exist.
-PRODUCT_AAPT_CONFIG := normal hdpi xhdpi
+PRODUCT_AAPT_CONFIG := normal xhdpi
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 
